@@ -6,6 +6,7 @@ const bodyParser = require("body-parser");
 const User = require("./models/user")
 
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded());
 //home page
 app.get("/", (req,res)=>{
     res.send("home page");
@@ -41,7 +42,31 @@ app.get("/user/:id", async(req,res)=>{
     }
     res.status(201).json(response);
 })
-//
+//update user by userId
+app.put("/user/:userId", async(req,res)=>{
+    try {
+        const userId = req.params.userId;
+        const {name,age} = req.body;
+        console.log(userId);
+        // console.log(userData);
+        const user = await User.findOneAndUpdate({_id:userId},{$set:{name, age}},
+            {new:true}
+        )
+        console.log("user",user)
+        return res.status(200).json({message: "user updated"});
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({error: "internal server error"})
+    }
+})
+
+//delete a user
+app.delete("/user/:userId", async(req,res)=>{
+    const userId = req.params.userId;
+    const user = await User.findOneAndDelete({_id:userId});
+    console.log(user)
+    return res.status(200).json({message: "user deleted"})
+})
 
 //server connection
 app.listen(PORT,()=>console.log(`server started @...http://localhost: ${PORT}`))
