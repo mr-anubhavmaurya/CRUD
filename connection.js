@@ -13,4 +13,4 @@ db.on("error", (error)=>{
     console.log("error:-",error);
 })
 
-module.exports = {db}
+module.exports = db
